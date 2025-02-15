@@ -11,7 +11,7 @@ def setup_crew():
     # Set OpenAI API key
     llm = ChatOpenAI(
         model="gpt-3.5-turbo",  # You can use "gpt-4" if you have access
-        api_key="put api key here"  # Replace with your OpenAI API key
+        api_key=""  # Replace with your OpenAI API key
     )
 
     # Create agents
