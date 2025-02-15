@@ -36,12 +36,14 @@ const assignDoctor = async (specialization) => {
 
 exports.generateReport = async (req, res) => {
   try {
-    const { name, age, symptoms, medicalHistory } = req.body;
+    const { email, age, symptoms } = req.body;
 
     const specialization = await getSpecializationFromAI(symptoms);
     if (!specialization) {
       return res.status(500).json({ error: "AI failed to determine specialization" });
     }
+
+    console.log("Specialization: ", specialization);
 
     const doctor = await assignDoctor(specialization);
 
@@ -59,25 +61,15 @@ exports.generateReport = async (req, res) => {
 
     const aiGeneratedReport = response.data.choices[0]?.text.trim() || "Report generation failed.";
     // 🔄 4️⃣ Store Report & Handle Multiple Reports
-    let patient = await Patient.findOne({ name });
-
-    if (!patient) {
-      // Create new patient if not found
-      patient = new Patient({
-        name,
-        age,
-        symptoms,
-        medicalHistory,
-        reports: [],
-        doctorAssigned: doctor._id,
-      });
-    }
+    let patient = await Patient.findOne({ email });
 
     // Push new report into array
     patient.reports.push({
       content: aiGeneratedReport,
       date: new Date(),
     });
+
+    patient.doctorAssigned = doctor._id;
 
     // Send email to the assigned doctor
     await sendEmail(
@@ -101,7 +93,7 @@ exports.generateReport = async (req, res) => {
     res.status(201).json({
       message: "Report generated successfully!",
       patientId: patient._id,
-      assignedDoctor: assignedDoctorId,
+      assignedDoctor: doctor._id,
       specialization,
       report: aiGeneratedReport,
     });

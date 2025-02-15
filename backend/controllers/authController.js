@@ -4,8 +4,8 @@ const Patient = require("../models/patientModel");
 const Doctor = require("../models/doctorModel");
 
 exports.register = async (req, res) => {
-  const { name, email, password, uniqueId, role } = req.body;
-  if (!name || !email || !password || !uniqueId || !role) {
+  const { name, email, password, role } = req.body;
+  if (!name || !email || !password || !role) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -13,9 +13,9 @@ exports.register = async (req, res) => {
   let user;
 
   if (role === "patient") {
-    user = new Patient({ name, username, password: hashedPassword, uniqueId });
-  } else if (role === "doctor") {
-    user = new Doctor({ name, email, password: hashedPassword, uniqueId });
+    user = new Patient({ name, email, password: hashedPassword, age: req.body.age, symptoms: req.body.symptoms || null });
+  } else if (role.toLowerCase() === "doctor") {
+    user = new Doctor({ name, email, password: hashedPassword, expertise: req.body.expertise, availableTimings: req.body.availableTimings });
   } else {
     return res.status(400).json({ message: "Invalid role" });
   }
