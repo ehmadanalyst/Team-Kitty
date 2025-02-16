@@ -9,6 +9,7 @@ const authMiddleware = (role) => {
 
     const token = authHeader.split(" ")[1];   
     if (!token) return res.status(401).json({ message: "Access Denied" });
+    console.log("Token: ", token);
 
     try {
       console.log('Withing try');

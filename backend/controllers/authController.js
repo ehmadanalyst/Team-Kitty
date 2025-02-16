@@ -4,6 +4,7 @@ const Patient = require("../models/patientModel");
 const Doctor = require("../models/doctorModel");
 
 exports.register = async (req, res) => {
+  console.log("Inside Register");
   const { name, email, password, role } = req.body;
   if (!name || !email || !password || !role) {
     return res.status(400).json({ message: "All fields are required" });
@@ -45,5 +46,5 @@ exports.login = async (req, res) => {
     expiresIn: "1h",
   });
 
-  res.json({ token, uniqueId: user.uniqueId });
+  res.json({ token, uniqueId: user._id });
 };
